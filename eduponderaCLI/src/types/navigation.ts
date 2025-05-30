@@ -4,3 +4,4 @@ export type RootStackParamList = {
   RegistroMateria: undefined;
   VistaMateria: { materiaId: string };
 };
+

@@ -4,7 +4,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { enableScreens } from 'react-native-screens';
 enableScreens(); // Mejora el rendimiento y evita este tipo de errores
 import Bienvenida from './src/types/Bienvenida';
-import Materias from './src/types/Materias';
+import Materias from './src/types/VistaMateriaDetalle';
 import RegistroMateria from './src/types/RegistroMateria';
 import VistaMateria from './src/types/VistaMateria';
 import { Materia } from './src/types';

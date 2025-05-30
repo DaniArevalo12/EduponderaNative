@@ -1,44 +1,177 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
-import { Materia } from '.';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  Image,
+} from 'react-native';
+import { launchImageLibrary } from 'react-native-image-picker';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
-interface Props {
+import { Materia } from '../types';
+
+// Define tus tipos de rutas para navegación si usas TypeScript
+type RootStackParamList = {
+  VistaMateriaDetalle: { materia: Materia; cortes: any[] };
+};
+
+type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
+
+const colores = ['#A0A0A0', '#A7C7FF', '#FFAFAF', '#B0FFAA', '#E7A7FF', '#FFD27F'];
+
+interface RegistroMateriaProps {
   onMateriaAgregada: (materia: Materia) => void;
 }
 
-export default function RegistroMateria({ onMateriaAgregada }: Props) {
+export default function RegistroMateria({ onMateriaAgregada }: RegistroMateriaProps) {
   const [nombre, setNombre] = useState('');
-  const [nota, setNota] = useState('');
-  const [porcentaje, setPorcentaje] = useState('');
+  const [colorSeleccionado, setColorSeleccionado] = useState<string | null>(null);
+  const [imagenFondo, setImagenFondo] = useState<string | null>(null);
 
-  const handleSubmit = () => {
+  const navigation = useNavigation<NavigationProp>();
+
+  const handleSeleccionarImagen = async () => {
+    launchImageLibrary({ mediaType: 'photo' }, (response) => {
+      if (response.assets && response.assets.length > 0) {
+        setImagenFondo(response.assets[0].uri || null);
+      }
+    });
+  };
+
+  const handleAgregar = () => {
+    if (!nombre) return;
+
     const nuevaMateria: Materia = {
       id: Date.now().toString(),
       nombre,
-      nota: parseFloat(nota),
-      porcentaje: parseFloat(porcentaje),
+      color: colorSeleccionado ?? undefined,
+      fondo: imagenFondo ?? undefined,
     };
+
     onMateriaAgregada(nuevaMateria);
+
+    navigation.navigate('VistaMateriaDetalle', {
+      materia: nuevaMateria,
+      cortes: [],
+    });
+
     setNombre('');
-    setNota('');
-    setPorcentaje('');
+    setColorSeleccionado(null);
+    setImagenFondo(null);
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.label}>Nombre de la materia</Text>
-      <TextInput style={styles.input} value={nombre} onChangeText={setNombre} placeholder="Ej: Matemáticas" />
-      <Text style={styles.label}>Nota actual</Text>
-      <TextInput style={styles.input} value={nota} onChangeText={setNota} keyboardType="numeric" />
-      <Text style={styles.label}>Porcentaje</Text>
-      <TextInput style={styles.input} value={porcentaje} onChangeText={setPorcentaje} keyboardType="numeric" />
-      <Button title="Agregar materia" onPress={handleSubmit} />
+    <View style={styles.card}>
+      <Text style={styles.titulo}>Registre su materia</Text>
+
+      <TextInput
+        style={styles.input}
+        placeholder="Nombre"
+        value={nombre}
+        onChangeText={setNombre}
+      />
+
+      <Text style={styles.label}>Colores:</Text>
+      <View style={styles.coloresContainer}>
+        {colores.map((color) => (
+          <TouchableOpacity
+            key={color}
+            style={[
+              styles.color,
+              { backgroundColor: color },
+              color === colorSeleccionado && styles.colorSeleccionado,
+            ]}
+            onPress={() => setColorSeleccionado(color)}
+          />
+        ))}
+      </View>
+
+      <Text style={styles.label}>Cargar fondo:</Text>
+      <TouchableOpacity style={styles.botonCargar} onPress={handleSeleccionarImagen}>
+        <Text style={styles.botonTexto}>📷 Subir imagen</Text>
+      </TouchableOpacity>
+
+      {imagenFondo && <Image source={{ uri: imagenFondo }} style={styles.previewImagen} />}
+
+      <TouchableOpacity
+        style={[styles.boton, { opacity: nombre ? 1 : 0.5 }]}
+        disabled={!nombre}
+        onPress={handleAgregar}
+      >
+        <Text style={styles.botonTexto}>Agregar Materia</Text>
+      </TouchableOpacity>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { padding: 16 },
-  label: { fontWeight: 'bold', marginTop: 8 },
-  input: { borderWidth: 1, borderColor: '#aaa', padding: 8, marginBottom: 12, borderRadius: 5 },
+  card: {
+    padding: 20,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#aaa',
+    backgroundColor: '#fff',
+    marginVertical: 20,
+  },
+  titulo: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10,
+    textAlign: 'center',
+  },
+  input: {
+    borderBottomWidth: 1,
+    borderColor: '#ccc',
+    marginBottom: 15,
+    padding: 8,
+  },
+  label: {
+    fontWeight: 'bold',
+    marginBottom: 5,
+  },
+  coloresContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginBottom: 15,
+    gap: 10,
+  },
+  color: {
+    width: 40,
+    height: 40,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    marginRight: 8,
+    marginBottom: 8,
+  },
+  colorSeleccionado: {
+    borderColor: '#000',
+    borderWidth: 2,
+  },
+  botonCargar: {
+    backgroundColor: '#eee',
+    padding: 10,
+    borderRadius: 8,
+    marginBottom: 10,
+    alignItems: 'center',
+  },
+  previewImagen: {
+    width: '100%',
+    height: 100,
+    marginBottom: 10,
+    borderRadius: 8,
+  },
+  boton: {
+    backgroundColor: '#000',
+    padding: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  botonTexto: {
+    color: '#fff',
+    fontWeight: 'bold',
+  },
 });
