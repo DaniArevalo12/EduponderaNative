@@ -3,6 +3,7 @@ export interface Materia {
   nombre: string;
   color?: string;
   fondo?: string;
+  descripcion?: string; // <-- agrega esto si quieres usar descripción
   nota?: number;
   porcentaje?: number;
 }

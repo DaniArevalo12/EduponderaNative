@@ -8,54 +8,48 @@ import {
   Image,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { Corte, Materia } from '../types';
+import { Materia } from '../types';
 
+// Update the props to accept an array of materias
 interface VistaMateriaDetalleProps {
-  materia: Materia;
-  cortes: Corte[];
-  onAgregarCorte: (materiaId: string) => void;
+  materias: Materia[];
+  onSeleccionar?: (materia: Materia) => void;
+  onAgregar?: () => void;
 }
 
 export default function VistaMateriaDetalle({
-  materia,
-  cortes,
-  onAgregarCorte,
+  materias,
+  onSeleccionar,
+  onAgregar,
 }: VistaMateriaDetalleProps) {
   const navigation = useNavigation();
 
-  const cortesDeMateria = cortes.filter((corte) => corte.materiaId === materia.id);
-
   return (
     <View style={styles.container}>
-      {/* Nombre de la materia */}
-      <Text style={styles.nombreMateria}>{materia.nombre}</Text>
-
-      {/* Botón agregar corte */}
-      <TouchableOpacity
-        style={styles.botonAgregar}
-        onPress={() => onAgregarCorte(materia.id)}
-      >
-        <Text style={styles.textoBoton}>Agregar Corte</Text>
-        <Text style={styles.iconoMas}>＋</Text>
-      </TouchableOpacity>
-
-      {/* Lista de cortes */}
+      <Text style={styles.nombreMateria}>Tus Materias</Text>
       <FlatList
-        data={cortesDeMateria}
+        data={materias}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <View style={styles.itemCorte}>
+          <TouchableOpacity
+            style={styles.itemCorte}
+            onPress={() => onSeleccionar && onSeleccionar(item)}
+          >
             <Text style={styles.nombreCorte}>{item.nombre}</Text>
             <Text style={styles.detalleCorte}>{item.descripcion}</Text>
-          </View>
+          </TouchableOpacity>
         )}
         ListEmptyComponent={
           <View style={styles.vacio}>
-            <Text style={styles.mensajeVacio}>No hay cortes registrados.</Text>
+            <Text style={styles.mensajeVacio}>No hay materias registradas.</Text>
           </View>
         }
         contentContainerStyle={{ paddingBottom: 30 }}
       />
+      <TouchableOpacity style={styles.botonAgregar} onPress={onAgregar}>
+        <Text style={styles.textoBoton}>Agregar Materia</Text>
+        <Text style={styles.iconoMas}>＋</Text>
+      </TouchableOpacity>
     </View>
   );
 }

@@ -4,7 +4,14 @@ import RegistroMateria from './RegistroMateria';
 import VistaMaterias from './VistaMateria';
 import { Materia } from '../types';
 
-export default function Bienvenida() {
+// Define the props type to accept props from App.tsx
+type BienvenidaProps = {
+  onMateriasActualizadas: (nuevas: Materia[]) => void;
+  navigation: any;
+  route: any;
+};
+
+const Bienvenida: React.FC<BienvenidaProps> = ({ onMateriasActualizadas }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [materias, setMaterias] = useState<Materia[]>([]);
 
@@ -16,6 +23,8 @@ export default function Bienvenida() {
     const nuevasMaterias = [...materias, nuevaMateria];
     setMaterias(nuevasMaterias);
     setIsModalOpen(false);
+    // Notifica al componente padre (App) sobre el cambio
+    onMateriasActualizadas(nuevasMaterias);
   };
 
   return (
@@ -58,7 +67,9 @@ export default function Bienvenida() {
       </Modal>
     </View>
   );
-}
+};
+
+export default Bienvenida;
 
 const styles = StyleSheet.create({
   container: {
