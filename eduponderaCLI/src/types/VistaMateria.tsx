@@ -14,7 +14,7 @@ import { Materia } from '../types';
 import { RootStackParamList } from '../types/navigation';
 
 type NavigationProp = StackNavigationProp<RootStackParamList, 'VistaMateria'>;
-
+//.
 interface VistaMateriasProps {
   materias: Materia[];
   onAgregar: () => void;

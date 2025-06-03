@@ -21,7 +21,7 @@ export default function VistaMateriaDetalle() {
   const handleAgregarCorte = () => {
     navigation.navigate('CrearCorte', { materiaId: materia.id });
   };
-
+//.
   return (
     <View style={styles.container}>
       <Text style={styles.nombreMateria}>{materia.nombre}</Text>

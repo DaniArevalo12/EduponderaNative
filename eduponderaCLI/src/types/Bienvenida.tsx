@@ -6,7 +6,7 @@ import { Materia } from '../types';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../types/navigation';
 
-// Corrige el tipo de props para aceptar las props desde App.tsx
+// Corrige el tipo de props para aceptar las props desde App.tsx.
 type BienvenidaProps = {
   materias: Materia[];
   onMateriasActualizadas: (nuevas: Materia[]) => void;

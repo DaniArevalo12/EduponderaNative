@@ -6,5 +6,5 @@ export type RootStackParamList = {
   VistaMateria: undefined;
   VistaMateriaDetalle: { materia: Materia; cortes: Corte[] };
   CrearCorte: { materiaId: string };
-  // ...otros screens si tienes
+  // ...otros screens si tienes.
 };

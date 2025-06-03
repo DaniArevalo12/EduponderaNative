@@ -27,7 +27,7 @@ export default function App() {
   const seleccionarMateria = (materia: Materia) => {
     // Navega a VistaMateriaDetalle pasando materia y cortes como params
     // Si usas navigation aquí, pásalo como prop o usa un callback en VistaMateria
-    // Ejemplo: navigation.navigate('VistaMateriaDetalle', { materia, cortes: materia.cortes ?? [] });
+    // Ejemplo: navigation.navigate('VistaMateriaDetalle', { materia, cortes: materia.cortes ?? [] });.
     console.log('Seleccionada:', materia);
   };
 

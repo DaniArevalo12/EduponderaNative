@@ -17,7 +17,7 @@ export interface Materia {
   cortes?: Corte[];
 }
 
-// Define RootStackParamList separately, do NOT put interfaces inside it
+// Define RootStackParamList separately, do NOT put interfaces inside it.
 export type RootStackParamList = {
   Bienvenida: undefined;
   Materias: {

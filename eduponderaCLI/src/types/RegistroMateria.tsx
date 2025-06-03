@@ -13,7 +13,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 import { Materia } from '../types';
 
-// Define tus tipos de rutas para navegación si usas TypeScript
+// Define tus tipos de rutas para navegación si usas TypeScript.
 type RootStackParamList = {
   VistaMateriaDetalle: { materia: Materia; cortes: any[] };
 };
