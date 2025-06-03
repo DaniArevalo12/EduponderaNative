@@ -8,8 +8,11 @@ import Bienvenida from './src/types/Bienvenida';
 import RegistroMateria from './src/types/RegistroMateria';
 import VistaMateria from './src/types/VistaMateria';
 import VistaMateriaDetalle from './src/types/VistaMateriaDetalle';
+import AgregarCorte from './src/types/CrearCorte';
+
 import { RootStackParamList } from './src/types/navigation';
 import { Materia } from './src/types';
+
 
 const Stack = createNativeStackNavigator();
 
@@ -68,6 +71,7 @@ export default function App() {
             />
           )}
         </Stack.Screen>
+        <Stack.Screen name="CrearCorte" component={AgregarCorte} />
       </Stack.Navigator>
     </NavigationContainer>
   );

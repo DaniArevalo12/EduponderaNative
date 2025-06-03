@@ -4,6 +4,7 @@ export interface Corte {
   descripcion: string;
   materiaId: string;
   porcentaje: number;
+  ponderacion: number;
 }
 
 export interface Materia {
