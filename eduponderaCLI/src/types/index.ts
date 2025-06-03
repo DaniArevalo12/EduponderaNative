@@ -1,18 +1,24 @@
+export interface Corte {
+  id: string;
+  nombre: string;
+  descripcion: string;
+  materiaId: string;
+  porcentaje: number;
+}
+
 export interface Materia {
   id: string;
   nombre: string;
   color?: string;
   fondo?: string;
-  descripcion?: string; // <-- agrega esto si quieres usar descripción
+  descripcion?: string;
   nota?: number;
   porcentaje?: number;
+  cortes?: Corte[];
 }
-export interface Corte {
-  id: string;
-  nombre: string;
-  descripcion: string;
-  materiaId: string; // Para saber a qué materia pertenece
-}export type RootStackParamList = {
+
+// Define RootStackParamList separately, do NOT put interfaces inside it
+export type RootStackParamList = {
   Bienvenida: undefined;
   Materias: {
     materias: Materia[];
@@ -23,7 +29,8 @@ export interface Corte {
   };
   VistaMateriaDetalle: {
     materia: Materia;
-    cortes: any[];
+    cortes: Corte[];
   };
+  VistaMateria: { materiaId: string };
+  CrearCorte: { materiaId: string };
 };
-

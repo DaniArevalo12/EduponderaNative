@@ -3,17 +3,24 @@ import { View, Text, Modal, StyleSheet, Image, TouchableOpacity } from 'react-na
 import RegistroMateria from './RegistroMateria';
 import VistaMaterias from './VistaMateria';
 import { Materia } from '../types';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../types/navigation';
 
-// Define the props type to accept props from App.tsx
+// Corrige el tipo de props para aceptar las props desde App.tsx
 type BienvenidaProps = {
+  materias: Materia[];
   onMateriasActualizadas: (nuevas: Materia[]) => void;
   navigation: any;
   route: any;
 };
 
-const Bienvenida: React.FC<BienvenidaProps> = ({ onMateriasActualizadas }) => {
+const Bienvenida: React.FC<BienvenidaProps> = ({
+  materias,
+  onMateriasActualizadas,
+  navigation,
+  route,
+}) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [materias, setMaterias] = useState<Materia[]>([]);
 
   const handleAgregarMateria = () => {
     setIsModalOpen(true);
@@ -21,10 +28,13 @@ const Bienvenida: React.FC<BienvenidaProps> = ({ onMateriasActualizadas }) => {
 
   const handleMateriaAgregada = (nuevaMateria: Materia) => {
     const nuevasMaterias = [...materias, nuevaMateria];
-    setMaterias(nuevasMaterias);
-    setIsModalOpen(false);
     // Notifica al componente padre (App) sobre el cambio
     onMateriasActualizadas(nuevasMaterias);
+    setIsModalOpen(false);
+  };
+
+    const seleccionarMateria = (materia: Materia) => {
+    navigation.navigate('VistaMateria', { materiaId: materia.id });
   };
 
   return (
@@ -49,7 +59,13 @@ const Bienvenida: React.FC<BienvenidaProps> = ({ onMateriasActualizadas }) => {
           <VistaMaterias
             materias={materias}
             onAgregar={handleAgregarMateria}
-            onSeleccionar={(materia) => console.log('Seleccionada:', materia)}
+            onSeleccionar={(materia) =>
+             navigation.navigate('VistaMateriaDetalle', {
+            materia,
+            cortes: materia.cortes ?? [],
+  })
+}
+
           />
           <TouchableOpacity style={styles.botonFlotante} onPress={handleAgregarMateria}>
             <Text style={styles.botonTexto}>➕</Text>

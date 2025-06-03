@@ -5,49 +5,44 @@ import {
   StyleSheet,
   TouchableOpacity,
   FlatList,
-  Image,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { Materia } from '../types';
+import { RouteProp, useRoute, useNavigation } from '@react-navigation/native';
+import { RootStackParamList } from '../types/navigation';
+import { StackNavigationProp } from '@react-navigation/stack';
 
-// Update the props to accept an array of materias
-interface VistaMateriaDetalleProps {
-  materias: Materia[];
-  onSeleccionar?: (materia: Materia) => void;
-  onAgregar?: () => void;
-}
+type RouteParams = RouteProp<RootStackParamList, 'VistaMateriaDetalle'>;
+type NavigationProp = StackNavigationProp<RootStackParamList, 'VistaMateriaDetalle'>;
 
-export default function VistaMateriaDetalle({
-  materias,
-  onSeleccionar,
-  onAgregar,
-}: VistaMateriaDetalleProps) {
-  const navigation = useNavigation();
+export default function VistaMateriaDetalle() {
+  const route = useRoute<RouteParams>();
+  const navigation = useNavigation<NavigationProp>();
+  const { materia } = route.params;
+
+  const handleAgregarCorte = () => {
+    navigation.navigate('CrearCorte', { materiaId: materia.id });
+  };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.nombreMateria}>Tus Materias</Text>
+      <Text style={styles.nombreMateria}>{materia.nombre}</Text>
       <FlatList
-        data={materias}
+        data={materia.cortes ?? []}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <TouchableOpacity
-            style={styles.itemCorte}
-            onPress={() => onSeleccionar && onSeleccionar(item)}
-          >
+          <TouchableOpacity style={styles.itemCorte}>
             <Text style={styles.nombreCorte}>{item.nombre}</Text>
             <Text style={styles.detalleCorte}>{item.descripcion}</Text>
           </TouchableOpacity>
         )}
         ListEmptyComponent={
           <View style={styles.vacio}>
-            <Text style={styles.mensajeVacio}>No hay materias registradas.</Text>
+            <Text style={styles.mensajeVacio}>No hay cortes registrados.</Text>
           </View>
         }
         contentContainerStyle={{ paddingBottom: 30 }}
       />
-      <TouchableOpacity style={styles.botonAgregar} onPress={onAgregar}>
-        <Text style={styles.textoBoton}>Agregar Materia</Text>
+      <TouchableOpacity style={styles.botonAgregar} onPress={handleAgregarCorte}>
+        <Text style={styles.textoBoton}>Agregar Corte</Text>
         <Text style={styles.iconoMas}>＋</Text>
       </TouchableOpacity>
     </View>
@@ -101,11 +96,6 @@ const styles = StyleSheet.create({
   vacio: {
     alignItems: 'center',
     marginTop: 60,
-  },
-  logo: {
-    width: 120,
-    height: 120,
-    marginBottom: 12,
   },
   mensajeVacio: {
     fontSize: 16,

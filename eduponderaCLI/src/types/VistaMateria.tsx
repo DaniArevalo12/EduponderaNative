@@ -7,9 +7,13 @@ import {
   TouchableOpacity,
   StyleSheet,
   ImageBackground,
-  
 } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
 import { Materia } from '../types';
+import { RootStackParamList } from '../types/navigation';
+
+type NavigationProp = StackNavigationProp<RootStackParamList, 'VistaMateria'>;
 
 interface VistaMateriasProps {
   materias: Materia[];
@@ -17,31 +21,31 @@ interface VistaMateriasProps {
   onSeleccionar: (materia: Materia) => void;
 }
 
-export default function VistaMaterias({
-  materias,
-  onAgregar,
-  onSeleccionar,
-}: VistaMateriasProps) {
+
+export default function VistaMaterias({ materias, onAgregar, onSeleccionar }: VistaMateriasProps) {
   const [busqueda, setBusqueda] = useState('');
 
   const materiasFiltradas = materias.filter((materia) =>
     materia.nombre.toLowerCase().includes(busqueda.toLowerCase())
   );
 
+  const handleSeleccionarMateria = (materia: Materia) => {
+    onSeleccionar(materia);
+  };
+
   return (
     <View style={styles.container}>
       <TextInput
-        placeholder="🔍 Search"
+        placeholder="🔍 Buscar"
         style={styles.buscador}
         value={busqueda}
         onChangeText={setBusqueda}
       />
-
       <FlatList
         data={materiasFiltradas}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <TouchableOpacity onPress={() => onSeleccionar(item)}>
+          <TouchableOpacity onPress={() => handleSeleccionarMateria(item)}>
             <ImageBackground
               source={item.fondo ? { uri: item.fondo } : undefined}
               style={[styles.card, item.fondo ? {} : { backgroundColor: item.color || '#eee' }]}
