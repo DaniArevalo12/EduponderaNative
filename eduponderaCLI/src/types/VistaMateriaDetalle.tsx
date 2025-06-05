@@ -18,14 +18,15 @@ export default function VistaMateriaDetalle() {
   const navigation = useNavigation<NavigationProp>();
   const { materia } = route.params;
 
-  const handleAgregarCorte = () => {
-  const handleAgregarCorte = () => {
-    navigation.navigate('CrearCorte', {
+const handleAgregarCorte = () => {
+  navigation.navigate('CrearCorte', {
     materiaId: materia.id,
     nombreMateria: materia.nombre,
     cortesActuales: materia.cortes ?? [],
   });
-};  };
+};
+
+
 //.
   return (
     <View style={styles.container}>

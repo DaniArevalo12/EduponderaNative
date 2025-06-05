@@ -1,71 +1,149 @@
 import React, { useState } from 'react';
 import {
-  View, Text, TextInput, Button, Alert, StyleSheet,
+  View,
+  Text,
+  TextInput,
+  StyleSheet,
+  TouchableOpacity,
+  Alert,
+  ScrollView,
 } from 'react-native';
-import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
+import { RouteProp, useRoute, useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from './navigation';
 import { StackNavigationProp } from '@react-navigation/stack';
 
-type RouteProps = RouteProp<RootStackParamList, 'CrearCorte'>;
-type NavigationProp = StackNavigationProp<RootStackParamList>;
+type CrearCorteRouteProp = RouteProp<RootStackParamList, 'CrearCorte'>;
+type NavigationProp = StackNavigationProp<RootStackParamList, 'CrearCorte'>;
 
-export default function AgregarCorte() {
-  const route = useRoute<RouteProps>();
+const CrearCorte = () => {
+  const route = useRoute<CrearCorteRouteProp>();
   const navigation = useNavigation<NavigationProp>();
-  const { nombreMateria, cortesActuales } = route.params;
+  const { materiaId, nombreMateria, cortesActuales } = route.params;
 
-  const [nombre, setNombre] = useState('');
+  const [nombreCorte, setNombreCorte] = useState('');
   const [ponderacion, setPonderacion] = useState('');
 
-  const handleGuardar = () => {
-    const nuevaPonderacion = parseFloat(ponderacion);
-    const total = cortesActuales.reduce((acc, corte) => acc + corte.ponderacion, 0);
+  const sumaPonderaciones = cortesActuales.reduce(
+    (sum, corte) => sum + corte.ponderacion,
+    0
+  );
+  const restante = 100 - sumaPonderaciones;
 
-    if (total + nuevaPonderacion > 100) {
+  const esValido = () => {
+    const pond = parseFloat(ponderacion);
+    return (
+      nombreCorte.trim().length > 0 &&
+      !isNaN(pond) &&
+      pond > 0 &&
+      pond <= restante
+    );
+  };
+
+  const agregarCorte = () => {
+    if (!esValido()) {
       Alert.alert(
-        'Error de Ponderación',
-        `La suma de las ponderaciones supera el 100%. Actualmente: ${total}%.`
+        'Error',
+        'Complete los campos correctamente. La ponderación debe ser válida y no exceder el 100%.'
       );
       return;
     }
 
-    Alert.alert('Corte Agregado', `${nombre} (${nuevaPonderacion}%)`);
-    navigation.goBack(); // o manejar el agregado en contexto/estado global
+    const nuevoCorte = {
+      id: Date.now().toString(),
+      nombre: nombreCorte,
+      ponderacion: parseFloat(ponderacion),
+      evaluaciones: [],
+    };
+
+    // Aquí deberías manejar cómo enviar el nuevo corte a VistaMateriaDetalle
+    // (contexto global, redux, o props callback según lo estés manejando)
+    Alert.alert('Éxito', `Corte "${nombreCorte}" agregado.`);
+    navigation.goBack();
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Agregar Corte</Text>
-      <Text>Materia: {nombreMateria}</Text>
+    <ScrollView contentContainerStyle={styles.container}>
+      <Text style={styles.titulo}>Agregar Corte a {nombreMateria}</Text>
 
+      <Text style={styles.label}>Nombre del corte</Text>
       <TextInput
         style={styles.input}
-        placeholder="Nombre del Corte"
-        value={nombre}
-        onChangeText={setNombre}
+        placeholder="Ej: Primer Corte"
+        value={nombreCorte}
+        onChangeText={setNombreCorte}
       />
 
+      <Text style={styles.label}>Ponderación (%)</Text>
       <TextInput
         style={styles.input}
-        placeholder="Ponderación (%)"
+        placeholder="Ej: 30"
         keyboardType="numeric"
         value={ponderacion}
         onChangeText={setPonderacion}
       />
 
-      <Button title="Guardar Corte" onPress={handleGuardar} />
-    </View>
+      <TouchableOpacity style={styles.botonNegro}>
+        <Text style={styles.botonTexto}>Añadir un Elemento ⊕</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={[
+          styles.botonVerde,
+          !esValido() && styles.botonDeshabilitado,
+        ]}
+        onPress={agregarCorte}
+        disabled={!esValido()}
+      >
+        <Text style={styles.botonTexto}>Agregar Corte ⊕</Text>
+      </TouchableOpacity>
+    </ScrollView>
   );
-}
+};
+
+export default CrearCorte;
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20 },
-  title: { fontSize: 24, fontWeight: 'bold', marginBottom: 20 },
+  container: {
+    padding: 20,
+    backgroundColor: '#fff',
+    flexGrow: 1,
+  },
+  titulo: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+  label: {
+    fontWeight: 'bold',
+    marginBottom: 5,
+    fontSize: 16,
+  },
   input: {
-    borderWidth: 1,
     borderColor: '#ccc',
+    borderWidth: 1,
+    marginBottom: 15,
     borderRadius: 8,
     padding: 10,
-    marginBottom: 16,
+  },
+  botonNegro: {
+    backgroundColor: 'black',
+    padding: 15,
+    borderRadius: 10,
+    marginBottom: 20,
+  },
+  botonVerde: {
+    backgroundColor: 'green',
+    padding: 15,
+    borderRadius: 10,
+  },
+  botonDeshabilitado: {
+    backgroundColor: '#ccc',
+  },
+  botonTexto: {
+    color: '#fff',
+    textAlign: 'center',
+    fontWeight: 'bold',
+    fontSize: 16,
   },
 });

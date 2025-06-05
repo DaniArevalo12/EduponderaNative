@@ -8,7 +8,7 @@ import Bienvenida from './src/types/Bienvenida';
 import RegistroMateria from './src/types/RegistroMateria';
 import VistaMateria from './src/types/VistaMateria';
 import VistaMateriaDetalle from './src/types/VistaMateriaDetalle';
-import AgregarCorte from './src/types/CrearCorte';
+import CrearCorte from './src/types/CrearCorte';
 
 import { RootStackParamList } from './src/types/navigation';
 import { Materia } from './src/types';
@@ -71,7 +71,7 @@ export default function App() {
             />
           )}
         </Stack.Screen>
-        <Stack.Screen name="CrearCorte" component={AgregarCorte} />
+  <Stack.Screen name="CrearCorte" component={CrearCorte} />
       </Stack.Navigator>
     </NavigationContainer>
   );
