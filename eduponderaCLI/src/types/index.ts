@@ -1,10 +1,16 @@
+import { ReactNode } from "react";
+
 export interface Corte {
+  valor: ReactNode;
   id: string;
   nombre: string;
   descripcion: string;
   materiaId: string;
   porcentaje: number;
   ponderacion: number;
+  evaluaciones: {
+    nota: number; nombre: string; valor: number 
+}[];
 }
 
 export interface Materia {
@@ -35,3 +41,10 @@ export type RootStackParamList = {
   VistaMateria: { materiaId: string };
   CrearCorte: { materiaId: string };
 };
+
+export interface Evaluacion {
+  nombre: string;
+  nota?: number;
+  porcentaje?: number;
+}
+

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -9,6 +9,7 @@ import {
 import { RouteProp, useRoute, useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '../types/navigation';
 import { StackNavigationProp } from '@react-navigation/stack';
+import { Corte } from '.';
 
 type RouteParams = RouteProp<RootStackParamList, 'VistaMateriaDetalle'>;
 type NavigationProp = StackNavigationProp<RootStackParamList, 'VistaMateriaDetalle'>;
@@ -18,28 +19,38 @@ export default function VistaMateriaDetalle() {
   const navigation = useNavigation<NavigationProp>();
   const { materia } = route.params;
 
-const handleAgregarCorte = () => {
-  navigation.navigate('CrearCorte', {
-    materiaId: materia.id,
-    nombreMateria: materia.nombre,
-    cortesActuales: materia.cortes ?? [],
-  });
-};
+  const [cortes, setCortes] = useState<Corte[]>(materia.cortes ?? []);
 
+  const handleAgregarCorte = () => {
+    navigation.navigate('CrearCorte', {
+      materiaId: materia.id,
+      nombreMateria: materia.nombre,
+      cortesActuales: cortes,
+      onCorteAgregado: (nuevoCorte: Corte) => {
+        setCortes((prev) => [...prev, nuevoCorte]);
+      },
+    });
+  };
 
-//.
   return (
     <View style={styles.container}>
       <Text style={styles.nombreMateria}>{materia.nombre}</Text>
       <FlatList
-        data={materia.cortes ?? []}
+        data={cortes}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <TouchableOpacity style={styles.itemCorte}>
-            <Text style={styles.nombreCorte}>{item.nombre}</Text>
-            <Text style={styles.detalleCorte}>{item.descripcion}</Text>
-          </TouchableOpacity>
-        )}
+      <TouchableOpacity
+        style={styles.itemCorte}
+      onPress={() => navigation.navigate('EvaluacionesPorCorte', {
+        materia: materia,
+        corte: item
+    })}
+  >
+    <Text style={styles.nombreCorte}>{item.nombre}</Text>
+    <Text style={styles.detalleCorte}>{item.descripcion}</Text>
+  </TouchableOpacity>
+)}
+
         ListEmptyComponent={
           <View style={styles.vacio}>
             <Text style={styles.mensajeVacio}>No hay cortes registrados.</Text>
@@ -55,6 +66,7 @@ const handleAgregarCorte = () => {
   );
 }
 
+// ...styles igual que antes...
 const styles = StyleSheet.create({
   container: {
     flex: 1,

@@ -6,5 +6,18 @@ export type RootStackParamList = {
   VistaMateria: undefined;
   VistaMateriaDetalle: { materia: Materia; cortes: Corte[] };
   CrearCorte: {  
-   materiaId: string;nombreMateria: string;cortesActuales: Corte[];};
+    materiaId: string;
+    nombreMateria: string;
+    cortesActuales: Corte[];
+    onCorteAgregado: (nuevoCorte: Corte) => void;
+  };
+  EvaluacionesPorCorte: {
+    materia: Materia;
+    corte: Corte;
+  };
+
+  Predecir: {
+  corte: Corte;
+};
+
 };

@@ -9,12 +9,14 @@ import RegistroMateria from './src/types/RegistroMateria';
 import VistaMateria from './src/types/VistaMateria';
 import VistaMateriaDetalle from './src/types/VistaMateriaDetalle';
 import CrearCorte from './src/types/CrearCorte';
+import EvaluacionCorte from './src/types/EvaluacionCorte';
+import EvaluacionesPorCorte from './src/types/EvaluacionCorte';
+import Predecir from './src/types/Predecir';
 
 import { RootStackParamList } from './src/types/navigation';
 import { Materia } from './src/types';
 
-
-const Stack = createNativeStackNavigator();
+const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function App() {
   const [materias, setMaterias] = useState<Materia[]>([]);
@@ -25,13 +27,6 @@ export default function App() {
 
   const actualizarMaterias = (nuevas: Materia[]) => {
     setMaterias(nuevas);
-  };
-
-  const seleccionarMateria = (materia: Materia) => {
-    // Navega a VistaMateriaDetalle pasando materia y cortes como params
-    // Si usas navigation aquí, pásalo como prop o usa un callback en VistaMateria
-    // Ejemplo: navigation.navigate('VistaMateriaDetalle', { materia, cortes: materia.cortes ?? [] });.
-    console.log('Seleccionada:', materia);
   };
 
   return (
@@ -46,6 +41,7 @@ export default function App() {
             />
           )}
         </Stack.Screen>
+
         <Stack.Screen name="VistaMateria">
           {(props) => (
             <VistaMateria
@@ -53,7 +49,6 @@ export default function App() {
               materias={materias}
               onAgregar={() => {}}
               onSeleccionar={(materia) => {
-                // Aquí navega correctamente a VistaMateriaDetalle
                 props.navigation.navigate('VistaMateriaDetalle', {
                   materia,
                   cortes: materia.cortes ?? [],
@@ -62,6 +57,7 @@ export default function App() {
             />
           )}
         </Stack.Screen>
+
         <Stack.Screen name="VistaMateriaDetalle" component={VistaMateriaDetalle} />
         <Stack.Screen name="RegistroMateria">
           {(props) => (
@@ -71,7 +67,10 @@ export default function App() {
             />
           )}
         </Stack.Screen>
-  <Stack.Screen name="CrearCorte" component={CrearCorte} />
+
+        <Stack.Screen name="CrearCorte" component={CrearCorte} />
+        <Stack.Screen name="EvaluacionesPorCorte" component={EvaluacionesPorCorte} />
+        <Stack.Screen name="Predecir" component={Predecir} />
       </Stack.Navigator>
     </NavigationContainer>
   );
