@@ -5,6 +5,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   FlatList,
+  TextInput,
 } from 'react-native';
 import { RouteProp, useRoute, useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '../types/navigation';
@@ -20,6 +21,7 @@ export default function VistaMateriaDetalle() {
   const { materia } = route.params;
 
   const [cortes, setCortes] = useState<Corte[]>(materia.cortes ?? []);
+  const [busqueda, setBusqueda] = useState('');
 
   const handleAgregarCorte = () => {
     navigation.navigate('CrearCorte', {
@@ -32,25 +34,36 @@ export default function VistaMateriaDetalle() {
     });
   };
 
+  const cortesFiltrados = cortes.filter((corte) =>
+    corte.nombre.toLowerCase().includes(busqueda.toLowerCase())
+  );
+
   return (
     <View style={styles.container}>
-      <Text style={styles.nombreMateria}>{materia.nombre}</Text>
+      <TextInput
+        placeholder="🔍 Buscar"
+        style={styles.buscador}
+        value={busqueda}
+        onChangeText={setBusqueda}
+      />
+
       <FlatList
-        data={cortes}
+        data={cortesFiltrados}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-      <TouchableOpacity
-        style={styles.itemCorte}
-      onPress={() => navigation.navigate('EvaluacionesPorCorte', {
-        materia: materia,
-        corte: item
-    })}
-  >
-    <Text style={styles.nombreCorte}>{item.nombre}</Text>
-    <Text style={styles.detalleCorte}>{item.descripcion}</Text>
-  </TouchableOpacity>
-)}
-
+          <TouchableOpacity
+            style={styles.itemCorte}
+            onPress={() =>
+              navigation.navigate('EvaluacionesPorCorte', {
+                materia: materia,
+                corte: item,
+              })
+            }
+          >
+            <Text style={styles.nombreCorte}>{item.nombre}</Text>
+            <Text style={styles.detalleCorte}>{item.descripcion}</Text>
+          </TouchableOpacity>
+        )}
         ListEmptyComponent={
           <View style={styles.vacio}>
             <Text style={styles.mensajeVacio}>No hay cortes registrados.</Text>
@@ -58,6 +71,7 @@ export default function VistaMateriaDetalle() {
         }
         contentContainerStyle={{ paddingBottom: 30 }}
       />
+
       <TouchableOpacity style={styles.botonAgregar} onPress={handleAgregarCorte}>
         <Text style={styles.textoBoton}>Agregar Corte</Text>
         <Text style={styles.iconoMas}>＋</Text>
@@ -66,17 +80,18 @@ export default function VistaMateriaDetalle() {
   );
 }
 
-// ...styles igual que antes...
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
   },
-  nombreMateria: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginBottom: 20,
+  buscador: {
+    height: 40,
+    borderRadius: 8,
+    borderColor: '#ccc',
+    borderWidth: 1,
+    paddingHorizontal: 10,
+    marginBottom: 16,
   },
   botonAgregar: {
     flexDirection: 'row',

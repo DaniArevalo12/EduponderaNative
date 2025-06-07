@@ -5,13 +5,13 @@ import {
   StyleSheet,
   TextInput,
   TouchableOpacity,
-  FlatList,
   ScrollView,
 } from 'react-native';
 import { RouteProp, useRoute, useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from './navigation';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { Corte } from '.';
+
 type RouteParams = RouteProp<RootStackParamList, 'EvaluacionesPorCorte'>;
 type NavigationProp = StackNavigationProp<RootStackParamList, 'EvaluacionesPorCorte'>;
 
@@ -20,13 +20,14 @@ const EvaluacionesPorCorte = () => {
   const navigation = useNavigation<NavigationProp>();
   const { corte, materia } = route.params;
 
-  const [notas, setNotas] = useState<number[]>(
-    corte.evaluaciones.map((ev) => ev.nota ?? 0)
+  // Guardamos notas como strings para permitir ingreso decimal
+  const [notas, setNotas] = useState<string[]>(
+    corte.evaluaciones.map((ev) => ev.nota?.toString() ?? '')
   );
 
   const handleNotaChange = (index: number, value: string) => {
     const nuevasNotas = [...notas];
-    nuevasNotas[index] = parseFloat(value) || 0;
+    nuevasNotas[index] = value;
     setNotas(nuevasNotas);
   };
 
@@ -35,10 +36,12 @@ const EvaluacionesPorCorte = () => {
   };
 
   const calcularDefinitiva = () => {
-    return notas.reduce((total, nota, i) => {
+    const definitiva = notas.reduce((total, notaStr, i) => {
+      const nota = parseFloat(notaStr.replace(',', '.')) || 0;
       const ponderacion = corte.evaluaciones[i].valor / 100;
       return total + nota * ponderacion;
-    }, 0).toFixed(1);
+    }, 0);
+    return definitiva.toFixed(1);
   };
 
   return (
@@ -56,9 +59,9 @@ const EvaluacionesPorCorte = () => {
             <Text style={styles.evaluacionNombre}>{ev.nombre}</Text>
             <TextInput
               placeholder="Nota"
-              keyboardType="numeric"
+              keyboardType="decimal-pad"
               style={styles.inputNota}
-              value={notas[i]?.toString()}
+              value={notas[i]}
               onChangeText={(text) => handleNotaChange(i, text)}
             />
             <Text style={styles.porcentaje}>{ev.valor}%</Text>
@@ -176,8 +179,8 @@ const styles = StyleSheet.create({
     borderColor: '#ccc',
   },
   predecirText: {
-  fontWeight: 'bold',
-  textAlign: 'center',
-  color: 'black',
-},
+    fontWeight: 'bold',
+    textAlign: 'center',
+    color: 'black',
+  },
 });

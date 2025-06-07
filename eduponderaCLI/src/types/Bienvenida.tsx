@@ -1,12 +1,18 @@
 import React, { useState } from 'react';
-import { View, Text, Modal, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import {
+  View,
+  Text,
+  Modal,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+  SafeAreaView,
+  Dimensions,
+} from 'react-native';
 import RegistroMateria from './RegistroMateria';
 import VistaMaterias from './VistaMateria';
 import { Materia } from '../types';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../types/navigation';
 
-// Corrige el tipo de props para aceptar las props desde App.tsx.
 type BienvenidaProps = {
   materias: Materia[];
   onMateriasActualizadas: (nuevas: Materia[]) => void;
@@ -28,17 +34,12 @@ const Bienvenida: React.FC<BienvenidaProps> = ({
 
   const handleMateriaAgregada = (nuevaMateria: Materia) => {
     const nuevasMaterias = [...materias, nuevaMateria];
-    // Notifica al componente padre (App) sobre el cambio
     onMateriasActualizadas(nuevasMaterias);
     setIsModalOpen(false);
   };
 
-    const seleccionarMateria = (materia: Materia) => {
-    navigation.navigate('VistaMateria', { materiaId: materia.id });
-  };
-
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       {materias.length === 0 ? (
         <>
           <Text style={styles.titulo}>Bienvenido Estudiante</Text>
@@ -60,12 +61,11 @@ const Bienvenida: React.FC<BienvenidaProps> = ({
             materias={materias}
             onAgregar={handleAgregarMateria}
             onSeleccionar={(materia) =>
-             navigation.navigate('VistaMateriaDetalle', {
-            materia,
-            cortes: materia.cortes ?? [],
-  })
-}
-
+              navigation.navigate('VistaMateriaDetalle', {
+                materia,
+                cortes: materia.cortes ?? [],
+              })
+            }
           />
           <TouchableOpacity style={styles.botonFlotante} onPress={handleAgregarMateria}>
             <Text style={styles.botonTexto}>➕</Text>
@@ -81,11 +81,13 @@ const Bienvenida: React.FC<BienvenidaProps> = ({
           </TouchableOpacity>
         </View>
       </Modal>
-    </View>
+    </SafeAreaView>
   );
 };
 
 export default Bienvenida;
+
+const screenWidth = Dimensions.get('window').width;
 
 const styles = StyleSheet.create({
   container: {
@@ -115,14 +117,15 @@ const styles = StyleSheet.create({
   },
   botonAgregarPrincipal: {
     backgroundColor: '#D9D9D9',
-    paddingHorizontal: 20,
-    paddingVertical: 10,
+    paddingVertical: 14,
     borderRadius: 10,
     alignSelf: 'center',
+    width: screenWidth * 0.7, // 70% del ancho de pantalla
+    alignItems: 'center',
     marginBottom: 10,
   },
   botonTexto: {
-    fontSize: 24,
+    fontSize: 16,
     fontWeight: 'bold',
     textAlign: 'center',
   },

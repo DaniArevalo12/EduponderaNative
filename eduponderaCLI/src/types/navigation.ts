@@ -20,4 +20,6 @@ export type RootStackParamList = {
   corte: Corte;
 };
 
+
+
 };
