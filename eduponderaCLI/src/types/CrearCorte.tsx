@@ -8,6 +8,7 @@ import {
   Alert,
   ScrollView,
 } from 'react-native';
+import { useAppData } from './AppDataContext';
 import { RouteProp, useRoute, useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from './navigation';
 import { StackNavigationProp } from '@react-navigation/stack';
@@ -60,12 +61,25 @@ const CrearCorte = () => {
       valor: undefined
     };
 
+    const sumaEvaluaciones = evaluaciones.reduce((acc, ev) => acc + ev.valor, 0);
+// if (sumaEvaluaciones !== 100) {
+//   Alert.alert('Error', 'La suma de las ponderaciones del corte debe ser exactamente 100%');
+//   return;
+// }
+
     onCorteAgregado(nuevoCorte);
     navigation.goBack();
   };
 
   // Añade nota: 0 al crear una nueva evaluación
- const añadirElemento = () => {
+const añadirElemento = () => {
+  const sumaActual = evaluaciones.reduce((acc, ev) => acc + ev.valor, 0);
+
+  if (sumaActual >= 100) {
+    Alert.alert('Error', 'La suma de las ponderaciones de los elementos no puede superar el 100%');
+    return;
+  }
+
   setEvaluaciones((prev) => [...prev, { nombre: '', valor: 0, nota: 0 }]);
 };
 
@@ -107,30 +121,39 @@ const CrearCorte = () => {
             }}
           />
           <TextInput
-            style={styles.input}
-            placeholder="Ponderación del elemento (%)"
-            keyboardType="numeric"
-            value={ev.valor.toString()}
-            onChangeText={(text) => {
-              const nuevos = [...evaluaciones];
-              nuevos[index].valor = parseFloat(text) || 0;
-              setEvaluaciones(nuevos);
-            }}
-          />
-          {/* Si quieres permitir editar la nota desde aquí, agrega este input */}
-          {/* 
-          <TextInput
-            style={styles.input}
-            placeholder="Nota"
-            keyboardType="numeric"
-            value={ev.nota.toString()}
-            onChangeText={(text) => {
-              const nuevos = [...evaluaciones];
-              nuevos[index].nota = parseFloat(text) || 0;
-              setEvaluaciones(nuevos);
-            }}
-          />
-          */}
+  style={styles.input}
+  placeholder="Ponderación del elemento (%)"
+  keyboardType="numeric"
+  value={ev.valor.toString()}
+  onChangeText={(text) => {
+    const nuevos = [...evaluaciones];
+    const nuevoValor = parseFloat(text);
+
+    if (text.trim() === '') {
+      nuevos[index].valor = 0;
+      setEvaluaciones(nuevos);
+      return;
+    }
+
+    if (!isNaN(nuevoValor)) {
+      const sumaSinActual = evaluaciones.reduce(
+        (acc, ev, i) => (i === index ? acc : acc + ev.valor),
+        0
+      );
+
+      if (sumaSinActual + nuevoValor > 100) {
+        Alert.alert('Error', 'La suma de las ponderaciones no puede superar el 100%');
+        return;
+      }
+
+      nuevos[index].valor = nuevoValor;
+      setEvaluaciones(nuevos);
+    }
+  }}
+/>
+
+          
+
         </View>
       ))}
 

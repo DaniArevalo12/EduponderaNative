@@ -10,7 +10,6 @@ import {
 import { RouteProp, useRoute, useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from './navigation';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { Corte } from '.';
 
 type RouteParams = RouteProp<RootStackParamList, 'EvaluacionesPorCorte'>;
 type NavigationProp = StackNavigationProp<RootStackParamList, 'EvaluacionesPorCorte'>;
@@ -35,9 +34,17 @@ const EvaluacionesPorCorte = () => {
     navigation.navigate('Predecir', { corte });
   };
 
+  const [modoEdicion, setModoEdicion] = useState<boolean>(false);
+
+  const toggleModoEdicion = () => {
+    setModoEdicion(!modoEdicion);
+  };
+
+  
+
   const calcularDefinitiva = () => {
     const definitiva = notas.reduce((total, notaStr, i) => {
-      const nota = parseFloat(notaStr.replace(',', '.')) || 0;
+      const nota = parseFloat(notaStr.replace(',', '.'));
       const ponderacion = corte.evaluaciones[i].valor / 100;
       return total + nota * ponderacion;
     }, 0);
@@ -74,9 +81,6 @@ const EvaluacionesPorCorte = () => {
         </View>
       </View>
 
-      <TouchableOpacity style={styles.agregarCorteBtn}>
-        <Text style={styles.agregarCorteText}>Agregar Corte</Text>
-      </TouchableOpacity>
 
       <TouchableOpacity style={styles.predecirBtn} onPress={handlePredecir}>
         <Text style={styles.predecirText}>Predecir</Text>

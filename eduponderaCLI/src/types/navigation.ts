@@ -1,4 +1,4 @@
-import { Materia, Corte } from '../types';
+import { Materia, Corte } from '.';
 
 export type RootStackParamList = {
   Bienvenida: undefined;
